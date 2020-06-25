@@ -30,7 +30,7 @@ func (d *Dictionary) DictionaryIdsInterface(dictionaryName string) (res []interf
 		return
 	}
 	for i := range (*d)[dictionaryName] {
-		res = append(res, int(i))
+		res = append(res, i)
 	}
 	return
 }
