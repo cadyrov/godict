@@ -3,6 +3,7 @@ package godict
 import (
 	"encoding/json"
 	"github.com/cadyrov/goerr"
+	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -94,4 +95,42 @@ func SendJson(writer http.ResponseWriter, httpCode int, data interface{}) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func Marshal(val interface{}) (data []byte, e goerr.IError) {
+	data, err := json.Marshal(val)
+	if err != nil {
+		e = goerr.New(err.Error())
+	}
+	return
+}
+
+func YamlMarshal(val interface{}) (data []byte, e goerr.IError) {
+	data, err := yaml.Marshal(val)
+	if err != nil {
+		e = goerr.New(err.Error())
+	}
+	return
+}
+
+func Unmarshal(data []byte, val interface{}) (e goerr.IError) {
+	if data == nil {
+		return
+	}
+	err := json.Unmarshal(data, val)
+	if err != nil {
+		e = goerr.New(err.Error())
+	}
+	return
+}
+
+func YamlUnmarshal(data []byte, val interface{}) (e goerr.IError) {
+	if data == nil {
+		return
+	}
+	err := yaml.Unmarshal(data, val)
+	if err != nil {
+		e = goerr.New(err.Error())
+	}
+	return
 }
