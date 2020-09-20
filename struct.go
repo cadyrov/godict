@@ -1,5 +1,15 @@
 package godict
 
+const (
+	ENi = 45
+	RUi = 643
+
+	ENLocale = Locale(ENi)
+	RULocale = Locale(RUi)
+)
+
+type Locale int
+
 type DictionaryRender struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
