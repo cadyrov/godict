@@ -30,3 +30,22 @@ type Response struct {
 	Pagination interface{} `json:"pagination,omitempty"`
 	Error      interface{} `json:"error,omitempty"`
 }
+
+func (d *Dictionary) Render() map[string]*[]DictionaryRender {
+	result := make(map[string]*[]DictionaryRender)
+
+	for key, value := range *d {
+		dr := make([]DictionaryRender, 0, len(value))
+
+		for rKey, rVal := range value {
+			dr = append(dr, DictionaryRender{
+				ID:   rKey,
+				Name: rVal,
+			})
+		}
+
+		result[key] = &dr
+	}
+
+	return result
+}
