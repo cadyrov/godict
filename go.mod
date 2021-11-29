@@ -1,4 +1,4 @@
-module github.com/cadyrov/godict
+module github.com/cadyrov/godict/v2
 
 go 1.15
 
