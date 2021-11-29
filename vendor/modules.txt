@@ -1,6 +1,0 @@
-# github.com/cadyrov/goerr v2.0.1+incompatible
-## explicit
-github.com/cadyrov/goerr
-# gopkg.in/yaml.v2 v2.3.0
-## explicit
-gopkg.in/yaml.v2
