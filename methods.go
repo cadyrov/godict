@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/cadyrov/goerr"
+	"github.com/cadyrov/goerr/v2"
 	"gopkg.in/yaml.v2"
 )
 
