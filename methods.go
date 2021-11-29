@@ -2,6 +2,7 @@ package godict
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -10,10 +11,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var (
+	ErrDictionaryNotFound = errors.New("dictionary_not_found")
+)
+
 func (d *Dictionary) DictionaryRender(dictionaryName string,
 	dictionaryID int) (res DictionaryRender, e goerr.IError) {
 	if !d.IsKeyExists(dictionaryName) {
-		e = goerr.New("dictionary_not_found")
+		e = goerr.NotFound(ErrDictionaryNotFound)
 
 		return
 	}
@@ -32,7 +37,7 @@ func (d *Dictionary) IsKeyExists(key string) (res bool) {
 
 func (d *Dictionary) DictionaryIdsInterface(dictionaryName string) (res []interface{}, e goerr.IError) {
 	if !d.IsKeyExists(dictionaryName) {
-		e = goerr.New("dictionary not found")
+		e = goerr.NotFound(ErrDictionaryNotFound)
 
 		return
 	}
@@ -47,7 +52,7 @@ func (d *Dictionary) DictionaryIdsInterface(dictionaryName string) (res []interf
 func ParseBody(r io.ReadCloser, data interface{}) goerr.IError {
 	body, err := ioutil.ReadAll(r)
 	if err != nil {
-		return goerr.New(err.Error()).HTTP(http.StatusBadRequest)
+		return goerr.BadRequest(err)
 	}
 
 	defer func() {
@@ -59,7 +64,7 @@ func ParseBody(r io.ReadCloser, data interface{}) goerr.IError {
 
 	err = json.Unmarshal(body, data)
 	if err != nil {
-		return goerr.New(err.Error()).HTTP(http.StatusBadRequest)
+		return goerr.BadRequest(err)
 	}
 
 	return nil
@@ -72,8 +77,8 @@ func Ok(message interface{}, data interface{}, pagination interface{}) *Response
 func Error(e goerr.IError) *Response {
 	httpCode := http.StatusInternalServerError
 
-	if e.GetCode() >= http.StatusBadRequest && e.GetCode() <= http.StatusNetworkAuthenticationRequired {
-		httpCode = e.GetCode()
+	if e.Code() >= http.StatusBadRequest && e.Code() <= http.StatusNetworkAuthenticationRequired {
+		httpCode = e.Code()
 	}
 
 	return &Response{HTTPCode: httpCode, Error: e}
@@ -120,7 +125,7 @@ func SendJSON(writer http.ResponseWriter, httpCode int, data interface{}) {
 func Marshal(val interface{}) (data []byte, e goerr.IError) {
 	data, err := json.Marshal(val)
 	if err != nil {
-		e = goerr.New(err.Error())
+		e = goerr.Internal(err)
 	}
 
 	return data, e
@@ -129,7 +134,7 @@ func Marshal(val interface{}) (data []byte, e goerr.IError) {
 func YamlMarshal(val interface{}) (data []byte, e goerr.IError) {
 	data, err := yaml.Marshal(val)
 	if err != nil {
-		e = goerr.New(err.Error())
+		e = goerr.Internal(err)
 	}
 
 	return data, e
@@ -142,7 +147,7 @@ func Unmarshal(data []byte, val interface{}) (e goerr.IError) {
 
 	err := json.Unmarshal(data, val)
 	if err != nil {
-		e = goerr.New(err.Error())
+		e = goerr.Internal(err)
 	}
 
 	return e
@@ -155,7 +160,7 @@ func YamlUnmarshal(data []byte, val interface{}) (e goerr.IError) {
 
 	err := yaml.Unmarshal(data, val)
 	if err != nil {
-		e = goerr.New(err.Error())
+		e = goerr.Internal(err)
 	}
 
 	return e
