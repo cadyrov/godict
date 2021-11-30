@@ -81,7 +81,7 @@ func Error(e goerr.IError) *Response {
 		httpCode = e.Code()
 	}
 
-	return &Response{HTTPCode: httpCode, Error: e}
+	return &Response{HTTPCode: httpCode, Error: e.Error()}
 }
 
 func Send(writer http.ResponseWriter, response *Response) {
