@@ -70,6 +70,27 @@ func ParseBody(r io.ReadCloser, data interface{}) goerr.IError {
 	return nil
 }
 
+func ParseBodyReturned(r io.ReadCloser, data interface{})(body []byte ,e  goerr.IError) {
+	body, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, goerr.BadRequest(err)
+	}
+
+	defer func() {
+		err := r.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	err = json.Unmarshal(body, data)
+	if err != nil {
+		return body, goerr.BadRequest(err)
+	}
+
+	return body, nil
+}
+
 func Ok(message interface{}, data interface{}, pagination interface{}) *Response {
 	return &Response{HTTPCode: http.StatusOK, Message: message, Data: data, Pagination: pagination}
 }
